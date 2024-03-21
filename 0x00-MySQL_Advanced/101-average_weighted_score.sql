@@ -2,7 +2,6 @@
 DELIMITER //
 CREATE PROCEDURE ComputeAverageWeightedScoreForUsers ()
 BEGIN
-    UPDATE users SET users.average_score = avg_score WHERE users.id=u_id;
     UPDATE users, (SELECT users.id, SUM(score * weight) / SUM(weight) AS avg_score 
             FROM users
             JOIN corrections ON users.id=corrections.user_id 
