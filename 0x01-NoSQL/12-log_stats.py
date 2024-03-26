@@ -29,4 +29,5 @@ def get_stats(nginx_collection):
 
 if __name__ == "__main__":
     server = 'mongodb://127.0.0.1:27017'
-    get_stats(MongoClient(server).logs.nginx)
+    client = MongoClient(server)
+    get_stats(client.logs.nginx)
