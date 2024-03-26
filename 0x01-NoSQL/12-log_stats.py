@@ -15,14 +15,16 @@ def get_stats(nginx_collection):
     print('{} logs'.format(_logs))
     print('Methods:')
     for method in methods:
-        count = nginx_collection.count_documents({"method": method})
+        docs = nginx_collection.find({"method": method})
+        count = len(list(docs))
         print('\tmethod {}: {}'.format(method, count))
-    stats = nginx_collection.count_documents(
+    stats = nginx_collection.find(
         {
             "method": "GET",
             "path": "/status"
         })
-    print('{} status check'.format(stats))
+    count = len(list(stats))
+    print('{} status check'.format(count))
 
 
 if __name__ == "__main__":
