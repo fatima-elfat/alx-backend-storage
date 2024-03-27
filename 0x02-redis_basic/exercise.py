@@ -50,11 +50,11 @@ def call_history(
         in the "...:outputs" list, then return the output.
         """
         key_output = str(method(self, *args, **kwargs))
+        a = method.__qualname__ + ":inputs"
+        b = method.__qualname__ + ":outputs"
         if isinstance(self._redis, redis.Redis):
-            self._redis.rpush(method.__qualname__ + ":inputs", str(args))
-            self._redis.rpush(
-                method.__qualname__ + ":outputs",
-                key_output)
+            self._redis.rpush(a, str(args))
+            self._redis.rpush(b, key_output)
         return key_output
     return wrapper
 
@@ -107,7 +107,6 @@ class Cache:
         key and return the key.
         """
         _key = str(uuid4())
-        self._redis.set(_key, data)
         return _key
 
     def get(self,
