@@ -29,7 +29,7 @@ def count_calls(
         """
         _key = method.__qualname__
         if isinstance(self._redis, redis.Redis):
-            self._redis.incr(_key, 2)
+            self._redis.incr(_key, 1)
         return method(self, *args, **kwargs)
     return wrapper
 
