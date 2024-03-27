@@ -5,7 +5,7 @@ Task 0-4 : Redis basic.
 from functools import wraps
 import redis
 from typing import Union, Optional, Callable
-from uuid import uuid4, UUID
+from uuid import uuid4
 
 
 def count_calls(
@@ -18,7 +18,7 @@ def count_calls(
     """
     # As a key, use the qualified name
     # of method using the __qualname__ dunder method.
-    _key = method.__qualname__
+    # _key = method.__qualname__
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -27,6 +27,7 @@ def count_calls(
         time the method is called and returns
         the value returned by the original method.
         """
+        _key = method.__qualname__
         if isinstance(self._redis, redis.Redis):
             self._redis.incr(_key)
         return method(self, *args, **kwargs)
@@ -48,11 +49,12 @@ def call_history(
         Pro tip: Store the output using rpush
         in the "...:outputs" list, then return the output.
         """
-        self._redis.rpush(method.__qualname__ + ":inputs", str(args))
         key_output = str(method(self, *args, **kwargs))
-        self._redis.rpush(
-            method.__qualname__ + ":outputs",
-            key_output)
+        if isinstance(self._redis, redis.Redis):
+            self._redis.rpush(method.__qualname__ + ":inputs", str(args))
+            self._redis.rpush(
+                method.__qualname__ + ":outputs",
+                key_output)
         return key_output
     return wrapper
 
