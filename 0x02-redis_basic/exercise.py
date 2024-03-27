@@ -8,31 +8,6 @@ from typing import Union, Optional, Callable
 from uuid import uuid4, UUID
 
 
-def replay(fn: Callable) -> None:
-    """
-    task 4.
-    display the history of calls of a particular function.
-    """
-    fn_name = fn.__qualname__
-    _redis = redis.Redis()
-    h = _redis.get(fn_name)
-    try:
-        h = h.decode("utf-8")
-    except Exception:
-        h = 0
-    print("{} was called {} times:".format(fn_name, h))
-    ins = fn_name + ":inputs"
-    inputs = _redis.lrange(ins, 0, -1)
-    outs = fn_name + ":outputs"
-    outputs = _redis.lrange(outs, 0, -1)
-    for input, output in zip(inputs, outputs):
-        print("{}(*{}) -> {}".format(
-            fn_name,
-            input.decode("utf-8"),
-            output.decode("utf-8")
-        ))
-
-
 def count_calls(
         method: Callable
         ) -> Callable:
@@ -80,6 +55,31 @@ def call_history(
             key_output)
         return key_output
     return wrapper
+
+
+def replay(fn: Callable) -> None:
+    """
+    task 4.
+    display the history of calls of a particular function.
+    """
+    fn_name = fn.__qualname__
+    _redis = redis.Redis()
+    h = _redis.get(fn_name)
+    try:
+        h = h.decode("utf-8")
+    except Exception:
+        h = 0
+    print("{} was called {} times:".format(fn_name, h))
+    ins = fn_name + ":inputs"
+    inputs = _redis.lrange(ins, 0, -1)
+    outs = fn_name + ":outputs"
+    outputs = _redis.lrange(outs, 0, -1)
+    for input, output in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(
+            fn_name,
+            input.decode("utf-8"),
+            output.decode("utf-8")
+        ))
 
 
 class Cache:
