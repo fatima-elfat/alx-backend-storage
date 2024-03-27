@@ -26,7 +26,7 @@ def count_reqsts(
         cache the result with
         an expiration time of 10 seconds.
         """
-        _redis.incr("count:{}".format(url))
+        _redis.incr("count:{}".format(url), 1)
         txt = "results:{}".format(url)
         r = _redis.get(txt)
         if r:
