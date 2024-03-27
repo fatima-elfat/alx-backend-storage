@@ -4,7 +4,7 @@ Task 0-4 : Redis basic.
 """
 from functools import wraps
 import redis
-from typing import Union, Optional, Callable
+from typing import Union, Optional, Callable, Any
 from uuid import uuid4
 
 
@@ -21,7 +21,7 @@ def count_calls(
     # _key = method.__qualname__
 
     @wraps(method)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self, *args, **kwargs) -> Any:
         """
         increments the count for that key every
         time the method is called and returns
@@ -107,6 +107,7 @@ class Cache:
         key and return the key.
         """
         _key = str(uuid4())
+        self._redis.set(_key, data)
         return _key
 
     def get(self,
